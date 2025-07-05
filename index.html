@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!--Main stylesheet-->
+    <link rel="stylesheet" href="style.css">
+    <title>Todo List Avancé</title>
+</head>
+<body>
+    <!--Wrapper-->
+    <div id="wrapper">
+        <div id="input-select">
+            <div>
+                   <input type="text" name="todo" id="todo-input" placeholder="Entrez une tache...">
+                    <button id="add-btn">Ajouter</button>
+            </div>
+            <div>
+                     <label for="sort">Trier par :</label>
+                      <select name="sort" id="sort">
+                        <option value="statut">statut</option>
+                        <option value="alpha-asc">A à Z</option>
+                        <option value="alpha-desc">Z à A</option>
+                      </select>
+            </div>
+        </div>
+        <!--Filter Elements-->
+        <div id="filter">
+            <div data-filter="all" class="active">toutes</div>
+            <div data-filter="done">déjà faites</div>
+            <div data-filter="todo">à faire</div>
+        </div><!--End Filter Elements-->
+        <!--Tasks Container-->
+        <div id="checkbox-input-container">
+            <div class="done todo">
+                <div>
+                     <input 
+                            type="checkbox" 
+                            name="todo1" 
+                            id="todo1"
+                            aria-describedby="todo1-desc"
+                      />
+                      <label for="todo1">Lorem ipsum, dolor</label>
+                      <span id="todo1-desc" class="sr-only">Tache à faire</span>
+                </div>
+               <div>
+                    <button class="remove-btn">Supprimer</button>
+               </div>
+            </div>
+            <div class="done todo">
+                <div>
+                    <input type="checkbox"
+                           name="todo2"
+                           id="todo2" 
+                           aria-describedby="todo2-desc"
+                     />
+                    <label for="todo2">Lorem ipsum, dolor sit amet</label>
+                    <span id="todo1-desc" class="sr-only">Tache à faire</span>
+                </div>
+                <div>
+                    <button class="remove-btn">Supprimer</button>
+                </div>
+            </div>
+            <div class="done todo">
+                <div>
+                     <input 
+                            type="checkbox" 
+                            name="todo3" 
+                            id="todo3"
+                            aria-describedby="todo3-desc"
+                      />
+                      <label for="todo3">Lorem ipsum, dolor sit amet consectetur</label>
+                      <span id="todo3-desc" class="sr-only">Tache à faire</span>
+                </div>
+                <div>
+                    <button class="remove-btn">Supprimer</button>
+                </div>
+                
+            </div>
+            
+        </div><!--End Tasks Container-->
+        
+    </div><!--End Wrapper-->
+    <script src="./script.js"></script>
+</body>
+</html>
