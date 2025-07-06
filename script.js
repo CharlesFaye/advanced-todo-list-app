@@ -54,7 +54,6 @@ function createNewTask(task) {
             input.setAttribute('type', 'checkbox');
             input.setAttribute('name', `todo-${i++}`);
             input.setAttribute('id', `${task.toLowerCase().split(" ").join("-")}-${Date.now()}`);
-            input.setAttribute('aria-describedby', `task-${i++}-desc`);
             input.onchange = verifyInputChecked;
             label.setAttribute('for', `${task.toLowerCase().split(" ").join("-")}-${Date.now()}`);
             label.textContent = `${task}`;
@@ -122,9 +121,17 @@ const todosOnStorage = JSON.parse(localStorage.getItem('todos')) || [];
  */
 function removeTodoFromList () {
     this.parentElement.parentElement.remove();
-   const index = todos.indexOf(Array.from(this.parentElement.parentElement.firstChild.children).filter(child => child.textContent !== undefined)[1].textContent)
-    todos.splice(index, 1);
-    todosOnStorage.splice(index, 1);  
+    const todoText = this.parentElement.parentElement.querySelector('label').textContent;
+    const index = todos.indexOf(todoText);
+    if (index !== -1) {
+        todos.splice(index, 1);
+    }
+
+    const storageIndex = todosOnStorage.findIndex(todo => todo.text === todoText);
+    if (storageIndex !== -1) {
+        todosOnStorage.splice(storageIndex, 1);
+    }
+
     localStorage.setItem('datas', JSON.stringify(todos));
     localStorage.setItem('todos', JSON.stringify(todosOnStorage));
 }
@@ -132,8 +139,6 @@ function removeTodoFromList () {
 
 removeButtons.forEach(button => {
     button.addEventListener('click', removeTodoFromList) })
-
-    localStorage.removeItem('checkbox')
 
 
 
@@ -219,7 +224,6 @@ function verifyInputChecked() {
         else {
             this.parentElement.parentElement.classList.add('todo');
             this.parentElement.parentElement.classList.remove('done');
-            console.log(this.id)
         }
         todosOnStorage.push({
             "id": this.id,
@@ -230,7 +234,7 @@ function verifyInputChecked() {
 }
 checkboxInputs.forEach(checkbox => {
 checkbox.addEventListener('change', verifyInputChecked)})
-
+//localStorage.removeItem('todos')
 /**
  * Filters the displayed todo items based on the selected filter ("done", "todo", or "all").
  * Updates the display style of each todo item in the tasksArray according to its status.
@@ -346,7 +350,6 @@ const renderTodo = (todo) => {
             input.setAttribute('type', 'checkbox');
             input.setAttribute('name', `todo-${j++}`);
             input.setAttribute('id', `${todo.id}`);
-            input.setAttribute('aria-describedby', `task-${j++}-desc`);
             input.checked = todo.complete;
             if (input.checked) {
                 divContainer.classList.add('done');
@@ -377,11 +380,16 @@ const renderTodo = (todo) => {
 const sortByAscendantOrder = () => {
     const todosArray = [];
     for (const task of tasksArray) {
-       todosArray.push({
-          id: task.firstElementChild.firstElementChild.id,
-          text : task.firstElementChild.lastElementChild.textContent.trim(),
-          complete : task.firstElementChild.firstElementChild.checked
-       })
+        const child1 = task.firstElementChild;
+        if (!child1) continue;
+        const checkbox = child1.firstElementChild;
+        const label = child1.lastElementChild;
+        if (!checkbox || !label) continue;
+        todosArray.push({
+            id: checkbox.id,
+            text: label.textContent ? label.textContent.trim() : "",
+            complete: checkbox.checked
+        });
     }
    
     const sortedTodos = todosArray.slice().sort((a, b) => 
@@ -402,21 +410,26 @@ const sortByAscendantOrder = () => {
  * - renderTodo: a function to render a todo object to the DOM.
  */
 const sortByDescendantOrder = () => {
-    const todosArray = [];
+   const todosArray = [];
     for (const task of tasksArray) {
-       todosArray.push({
-          id: task.firstElementChild.firstElementChild.id,
-          text : task.firstElementChild.lastElementChild.textContent.trim(),
-          complete : task.firstElementChild.firstElementChild.checked
-       })
+        const child1 = task.firstElementChild;
+        if (!child1) continue;
+        const checkbox = child1.firstElementChild;
+        const label = child1.lastElementChild;
+        if (!checkbox || !label) continue;
+        todosArray.push({
+            id: checkbox.id,
+            text: label.textContent ? label.textContent.trim() : "",
+            complete: checkbox.checked
+        });
     }
    
     const sortedTodos = todosArray.slice().sort((a, b) => 
         b.text.localeCompare(a.text, "fr")
     );
-   console.log(sortedTodos)
+
     clearTodosFromDOM();
-    sortedTodos.forEach(renderTodo);
+    sortedTodos.forEach(renderTodo)
 }
 
 /**
@@ -429,20 +442,25 @@ const sortByDescendantOrder = () => {
 const sortByStatus = () => {
     const todosArray = [];
     for (const task of tasksArray) {
-       todosArray.push({
-          id: task.firstElementChild.firstElementChild.id,
-          text : task.firstElementChild.lastElementChild.textContent.trim(),
-          complete : task.firstElementChild.firstElementChild.checked
-       })
+        const child1 = task.firstElementChild;
+        if (!child1) continue;
+        const checkbox = child1.firstElementChild;
+        const label = child1.lastElementChild;
+        if (!checkbox || !label) continue;
+        todosArray.push({
+            id: checkbox.id,
+            text: label.textContent ? label.textContent.trim() : "",
+            complete: checkbox.checked
+        });
     }
    
     const sortedTodos = todosArray.slice().sort((a, b) => {
         return a.complete - b.complete
-        }     
+    }
     );
-   
+
     clearTodosFromDOM();
-    sortedTodos.forEach(renderTodo);
+    sortedTodos.forEach(renderTodo)
 }
 
 
