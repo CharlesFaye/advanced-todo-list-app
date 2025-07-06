@@ -27,6 +27,8 @@ input[type="checkbox"] {
 #input-select  input {
     width: calc(25vw + 50px);
     padding: 5px;
+    margin-right: 15px;
+    margin-bottom: 15px;
 }
 
 #add-btn {
