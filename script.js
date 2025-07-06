@@ -127,9 +127,10 @@ function removeTodoFromList () {
         todos.splice(index, 1);
     }
 
-    const storageIndex = todosOnStorage.findIndex(todo => todo.text === todoText);
-    if (storageIndex !== -1) {
-        todosOnStorage.splice(storageIndex, 1);
+    for (let i = todosOnStorage.length - 1; i >= 0; i--) {
+        if (todosOnStorage[i].text === todoText) {
+            todosOnStorage.splice(i, 1);
+        }
     }
 
     localStorage.setItem('datas', JSON.stringify(todos));
