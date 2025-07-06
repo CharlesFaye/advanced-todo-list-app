@@ -49,7 +49,6 @@ function createNewTask(task) {
             const divChild2 = document.createElement('div');
             const input = document.createElement('input');
             const label = document.createElement('label');
-            const span = document.createElement('span');
             const button = document.createElement('button');
             divContainer.classList.add('done', 'todo');
             input.setAttribute('type', 'checkbox');
@@ -59,13 +58,10 @@ function createNewTask(task) {
             input.onchange = verifyInputChecked;
             label.setAttribute('for', `${task.toLowerCase().split(" ").join("-")}-${Date.now()}`);
             label.textContent = `${task}`;
-            span.id = `task-${i++}-desc`;
-            span.classList.add('sr-only');
-            span.textContent = "Tache à faire";
             button.classList.add('remove-btn');
             button.onclick = removeTodoFromList;
             button.textContent = "Supprimer";
-            divChild1.append(input, label, span);
+            divChild1.append(input, label);
             divChild2.append(button);
             divContainer.append(divChild1, divChild2);
             checkboxInputContainer.append(divContainer);
@@ -110,6 +106,7 @@ document.addEventListener('keypress', (e) => {
    }
 });
 
+const todosOnStorage = JSON.parse(localStorage.getItem('todos')) || [];
 
 /**
  * Removes a todo item from the DOM and updates the todos array and localStorage.
@@ -126,8 +123,10 @@ document.addEventListener('keypress', (e) => {
 function removeTodoFromList () {
     this.parentElement.parentElement.remove();
    const index = todos.indexOf(Array.from(this.parentElement.parentElement.firstChild.children).filter(child => child.textContent !== undefined)[1].textContent)
-    todos.splice(index, 1)  
+    todos.splice(index, 1);
+    todosOnStorage.splice(index, 1);  
     localStorage.setItem('datas', JSON.stringify(todos));
+    localStorage.setItem('todos', JSON.stringify(todosOnStorage));
 }
 
 
@@ -136,7 +135,7 @@ removeButtons.forEach(button => {
 
     localStorage.removeItem('checkbox')
 
-const todosOnStorage = JSON.parse(localStorage.getItem('todos')) || [];
+
 
 const activeFilter = localStorage.getItem('active');
 
@@ -145,11 +144,11 @@ if (activeFilter === "filter-done-active") {
     setActive(filterDone);
     tasksArray.forEach(task => {
        todosOnStorage.forEach(todo => {
-        if (todo.text === task.firstElementChild.children[1].textContent && todo.done === true) {
+        if (todo.text === task.firstElementChild.lastElementChild.textContent && todo.done === true) {
             task.firstElementChild.firstElementChild.checked = true;
             task.classList.remove('todo');
         }
-        else if(todo.text === task.firstElementChild.children[1].textContent && todo.done === false) {
+        else if(todo.text === task.firstElementChild.lastElementChild.textContent && todo.done === false) {
             task.firstElementChild.firstElementChild.checked = false;
             task.classList.add('todo');
         }
@@ -167,11 +166,11 @@ else if (activeFilter === "filter-todo-active") {
     setActive(filterTodo);
     tasksArray.forEach(task => {
        todosOnStorage.forEach(todo => {
-        if (todo.text === task.firstElementChild.children[1].textContent && todo.done === true) {
+        if (todo.text === task.firstElementChild.lastElementChild.textContent && todo.done === true) {
             task.firstElementChild.firstElementChild.checked = true;
             task.classList.remove('todo');
         }
-        else if (todo.text === task.firstElementChild.children[1].textContent && todo.done === false) {
+        else if (todo.text === task.firstElementChild.lastElementChild.textContent && todo.done === false) {
             task.firstElementChild.firstElementChild.checked = false;
             task.classList.add('todo');
         }
@@ -189,11 +188,11 @@ else {
     setActive(filterAll);
      tasksArray.forEach(task => {
        todosOnStorage.forEach(todo => {
-        if (task.firstElementChild.children[1].textContent === todo.text &&  todo.done === true) {
+        if (task.firstElementChild.lastElementChild.textContent === todo.text &&  todo.done === true) {
             task.firstElementChild.firstElementChild.checked = true;
             task.classList.remove('todo')
         }
-        else if(task.firstElementChild.children[1].textContent === todo.text && todo.done === false){
+        else if(task.firstElementChild.lastElementChild.textContent === todo.text && todo.done === false){
             task.firstElementChild.firstElementChild.checked = false;
             task.classList.add('todo')
         }
@@ -227,11 +226,10 @@ function verifyInputChecked() {
             "text": this.parentElement.lastElementChild.textContent,
             "done": this.checked
         })
-        localStorage.setItem('todos', JSON.stringify(todosOnStorage))
+       localStorage.setItem('todos', JSON.stringify(todosOnStorage))
 }
 checkboxInputs.forEach(checkbox => {
 checkbox.addEventListener('change', verifyInputChecked)})
-
 
 /**
  * Filters the displayed todo items based on the selected filter ("done", "todo", or "all").
@@ -344,7 +342,6 @@ const renderTodo = (todo) => {
             const divChild2 = document.createElement('div');
             const input = document.createElement('input');
             const label = document.createElement('label');
-            const span = document.createElement('span');
             const button = document.createElement('button');
             input.setAttribute('type', 'checkbox');
             input.setAttribute('name', `todo-${j++}`);
@@ -357,13 +354,10 @@ const renderTodo = (todo) => {
             input.onchange = verifyInputChecked;
             label.setAttribute('for', `${todo.id}`);
             label.textContent = `${todo.text}`;
-            span.id = `task-${j++}-desc`;
-            span.classList.add('sr-only');
-            span.textContent = "Tache à faire";
             button.classList.add('remove-btn');
             button.onclick = removeTodoFromList;
             button.textContent = "Supprimer";
-            divChild1.append(input, label, span);
+            divChild1.append(input, label);
             divChild2.append(button);
             divContainer.append(divChild1, divChild2);
             checkboxInputContainer.append(divContainer);
@@ -385,7 +379,7 @@ const sortByAscendantOrder = () => {
     for (const task of tasksArray) {
        todosArray.push({
           id: task.firstElementChild.firstElementChild.id,
-          text : task.firstElementChild.children[1].textContent.trim(),
+          text : task.firstElementChild.lastElementChild.textContent.trim(),
           complete : task.firstElementChild.firstElementChild.checked
        })
     }
@@ -412,7 +406,7 @@ const sortByDescendantOrder = () => {
     for (const task of tasksArray) {
        todosArray.push({
           id: task.firstElementChild.firstElementChild.id,
-          text : task.firstElementChild.children[1].textContent.trim(),
+          text : task.firstElementChild.lastElementChild.textContent.trim(),
           complete : task.firstElementChild.firstElementChild.checked
        })
     }
@@ -420,7 +414,7 @@ const sortByDescendantOrder = () => {
     const sortedTodos = todosArray.slice().sort((a, b) => 
         b.text.localeCompare(a.text, "fr")
     );
-   
+   console.log(sortedTodos)
     clearTodosFromDOM();
     sortedTodos.forEach(renderTodo);
 }
@@ -437,7 +431,7 @@ const sortByStatus = () => {
     for (const task of tasksArray) {
        todosArray.push({
           id: task.firstElementChild.firstElementChild.id,
-          text : task.firstElementChild.children[1].textContent.trim(),
+          text : task.firstElementChild.lastElementChild.textContent.trim(),
           complete : task.firstElementChild.firstElementChild.checked
        })
     }
